@@ -31,6 +31,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=15, unique=True)
+    username = models.CharField(max_length=100, blank=True, unique=True)
     full_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(blank=True, null=True)
     
@@ -42,10 +43,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = []  # phone & password only
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['phone']  # phone & password only
 
     objects = UserManager()
 
     def __str__(self):
-        return self.phone
+        return self.username

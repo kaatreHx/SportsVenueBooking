@@ -15,6 +15,7 @@ def send_sms(phone, message):
             from_=settings.TWILIO_PHONE_NUMBER,
             to=phone
         )
+        print("SMS sent successfully")
         return True, "SMS sent successfully"
     except TwilioRestException as e:
         return False, str(e)
