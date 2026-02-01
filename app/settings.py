@@ -142,6 +142,11 @@ TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 # REST Framework Settings
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
 }
 
 # Spectacular Settings

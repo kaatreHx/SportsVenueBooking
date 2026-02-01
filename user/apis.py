@@ -6,19 +6,16 @@ from .serializers import UserSerializer, UserRegisterSerializer, VerifyOTPSerial
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from .otp_helper import verify_otp
 
 class RegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
 class VerifyOTP(APIView):
     serializer_class = VerifyOTPSerializer
     permission_classes = [AllowAny]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
         if serializer.is_valid():
@@ -37,7 +34,6 @@ class UserAPIView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = ['get', 'patch', 'delete']
     permission_classes = [IsAuthenticatedOrReadOnly]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
 
 
