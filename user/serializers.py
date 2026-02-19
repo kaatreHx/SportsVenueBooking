@@ -6,8 +6,8 @@ from .otp_helper import generate_and_store_otp
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'phone', 'password', 'full_name', 'address', 'city', 'is_active', 'is_staff', 'is_superuser', 'created_at']
-        read_only_fields = ['id', 'is_active', 'is_staff', 'is_superuser', 'created_at']
+        fields = ['uuid', 'username', 'email', 'phone', 'password', 'full_name', 'address', 'city', 'is_active', 'is_vendor', 'is_superuser', 'created_at']
+        read_only_fields = ['uuid', 'is_active', 'is_superuser', 'created_at']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -28,8 +28,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'phone', 'full_name', 'address', 'city', 'is_active', 'is_staff', 'is_superuser', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ['uuid', 'username', 'email', 'phone', 'full_name', 'address', 'city', 'is_active', 'is_vendor', 'is_superuser', 'created_at']
+        read_only_fields = ['uuid', 'created_at']
 
 class VerifyOTPSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=15)
