@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
@@ -17,7 +18,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, phone, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
+        # extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
 
@@ -30,6 +31,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     phone = models.CharField(max_length=15, unique=True)
     username = models.CharField(max_length=100, blank=True, unique=True)
     full_name = models.CharField(max_length=100, blank=True)
@@ -39,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(max_length=100, blank=True)
 
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_vendor = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
