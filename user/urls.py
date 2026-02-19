@@ -7,10 +7,14 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'users', apis.UserAPIView, basename='user')
 
-urlpatterns = [
+auth_patterns = [
     path('register/', apis.RegisterAPIView.as_view(), name='register'),
     path('verify-otp/', apis.VerifyOTP.as_view(), name='verify_otp'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('refresh-token/', jwt_views.TokenRefreshView.as_view(), name='refresh'),
-    path('accounts/', include(router.urls))
+]
+
+urlpatterns = [
+    path('auth/', include(auth_patterns)),
+    path('users/', include(router.urls))
 ]
