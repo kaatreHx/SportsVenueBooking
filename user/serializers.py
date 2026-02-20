@@ -14,11 +14,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        user.is_active = False
+        user.is_active = True
         user.save()
         #Test number "+18777804236"
-        otp = generate_and_store_otp(user.phone)
-        send_sms(user.phone, f"Your OTP is {otp}")
+        # otp = generate_and_store_otp(user.phone)
+        # send_sms(user.phone, f"Your OTP is {otp}")
         return user
 
     def update(self, instance, validated_data):
