@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'user',
-    'attachment'
+    # 'attachment',
+    'futsal'
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -159,4 +160,10 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # Component containers for the UI
+}
+
+# Simple JWT Settings
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'uuid',
+    'USER_ID_CLAIM': 'user_id',
 }
