@@ -17,7 +17,7 @@ class Futsal(models.Model):
         decimal_places=6,
         help_text="GPS longitude"
     )
-    # images = GenericRelation(Attachment)
+    images = models.ImageField(upload_to='futsal_images/', blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=100)
