@@ -17,7 +17,6 @@ class Futsal(models.Model):
         decimal_places=6,
         help_text="GPS longitude"
     )
-    images = models.ImageField(upload_to='futsal_images/', blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=100)
@@ -29,3 +28,17 @@ class Futsal(models.Model):
 
     def __str__(self):
         return self.name
+
+class FutsalImage(models.Model):
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        primary_key=True,
+        editable=False
+    )
+    futsal = models.ForeignKey(
+        Futsal,
+        related_name="images",
+        on_delete=models.CASCADE
+    )
+    image = models.ImageField(upload_to="futsal_images/")
+    created_at = models.DateTimeField(auto_now_add=True)

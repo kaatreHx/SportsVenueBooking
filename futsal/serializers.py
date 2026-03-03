@@ -1,9 +1,21 @@
 from rest_framework import serializers
-from .models import Futsal
+from .models import Futsal, FutsalImage
 from user.serializers import UserSerializer
+
+class FutsalImageUploadSerializer(serializers.Serializer):
+    images = serializers.ListField(
+        child=serializers.ImageField(),
+        allow_empty=False
+    )
+
+class FutsalImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FutsalImage
+        fields = ("uuid", "image")
 
 class FutsalSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    images = FutsalImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Futsal
