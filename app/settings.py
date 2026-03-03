@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'user',
-    # 'attachment',
-    'futsal'
+    'futsal',
+    'booking',
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -162,7 +162,6 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API documentation for Futsal management system',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
     'SECURITY': [
         {
             'Bearer': [],
