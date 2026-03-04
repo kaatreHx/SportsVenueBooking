@@ -29,6 +29,9 @@ class Futsal(models.Model):
     def __str__(self):
         return self.name
 
+def futsal_image_path(instance, filename):
+    return f"futsal_images/{instance.futsal.user.uuid}/{filename}"
+
 class FutsalImage(models.Model):
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -40,5 +43,5 @@ class FutsalImage(models.Model):
         related_name="images",
         on_delete=models.CASCADE
     )
-    image = models.ImageField(upload_to="futsal_images/")
+    image = models.ImageField(upload_to=futsal_image_path)
     created_at = models.DateTimeField(auto_now_add=True)
