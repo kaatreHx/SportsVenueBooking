@@ -8,7 +8,15 @@ class FutsalImageUploadSerializer(serializers.Serializer):
         allow_empty=False
     )
 
+class FutsalImageBulkDeleteSerializer(serializers.Serializer):
+    image_uuids = serializers.ListField(
+        child=serializers.UUIDField(),
+        allow_empty=False
+    )
+
 class FutsalImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
     class Meta:
         model = FutsalImage
         fields = ("uuid", "image")
