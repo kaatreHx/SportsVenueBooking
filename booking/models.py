@@ -80,6 +80,9 @@ class Bookings(models.Model):
     def __str__(self):
         return f"{self.futsal.name} | {self.user.username} | {self.required_date}"
 
+def payment_proof_path(instance, filename):
+    return f"payment_proofs/{instance.booking.user.uuid}/{filename}"
+
 class PaymentProof(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -89,7 +92,7 @@ class PaymentProof(models.Model):
         related_name="payment_proof"
     )
 
-    proof = models.ImageField(upload_to="payment_proofs/")
+    proof = models.ImageField(upload_to=payment_proof_path)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
