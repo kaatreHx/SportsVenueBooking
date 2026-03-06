@@ -6,11 +6,16 @@ from .otp_helper import generate_and_store_otp
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['uuid', 'username', 'email', 'phone', 'password', 'full_name', 'address', 'city', 'is_active', 'is_vendor', 'is_superuser', 'created_at']
+        fields = ['uuid', 'username', 'email', 'phone', 'password', 'full_name', 'address', 'city', 'is_active', 'is_vendor', 'is_superuser', 'created_at', 'document', 'profile_picture']
         read_only_fields = ['uuid', 'is_active', 'is_superuser', 'created_at']
         extra_kwargs = {
             'password': {'write_only': True}
         }
+    
+    def validate(self, attrs):
+        if attrs.get('is_vendor') and not attrs.get('document'):
+            raise serializers.ValidationError("Document is required for vendors")
+        return attrs
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
