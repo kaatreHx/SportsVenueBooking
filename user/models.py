@@ -39,6 +39,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     address = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    document = models.FileField(upload_to='documents/', blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_vendor = models.BooleanField(default=False)
@@ -49,6 +51,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['phone']  # phone & password only
 
     objects = UserManager()
+
+    def clean(self):
+        if self.vendor and not self.document:
+            raise ValidationError("Document is required for vendors")
 
     def __str__(self):
         return self.username

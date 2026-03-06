@@ -60,9 +60,4 @@ class FutsalImage(models.Model):
         on_delete=models.CASCADE
     )
     image = models.ImageField(upload_to=futsal_image_path)
-    image_type = models.CharField(
-        max_length=50,
-        choices=[(tag.value, tag.value) for tag in ImageType],
-        default=ImageType.PICTURE.value
-    )
     created_at = models.DateTimeField(auto_now_add=True)
