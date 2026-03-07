@@ -52,9 +52,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    def clean(self):
-        if self.vendor and not self.document:
-            raise ValidationError("Document is required for vendors")
-
     def __str__(self):
         return self.username
