@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Futsal, FutsalImage
 from user.serializers import UserSerializer
+from booking.serializers import TimeSlotSerializer
 
 class FutsalImageUploadSerializer(serializers.Serializer):
     images = serializers.ListField(
@@ -24,6 +25,7 @@ class FutsalImageSerializer(serializers.ModelSerializer):
 class FutsalSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     images = FutsalImageSerializer(many=True, read_only=True)
+    time_slots = TimeSlotSerializer(many=True, read_only=True)
 
     class Meta:
         model = Futsal
