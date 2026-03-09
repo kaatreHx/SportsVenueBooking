@@ -5,6 +5,7 @@ from .helper import calculate_cancellation_fine
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .enum import BookingStatus
 
 class TimeSlotViewSet(viewsets.ModelViewSet):
     queryset = TimeSlot.objects.all()
