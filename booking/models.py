@@ -1,5 +1,5 @@
 from django.db import models
-from .enum import BookingStatus, PaymentStatus
+from .enum import BookingStatus, PaymentStatus, BookingType
 from futsal.models import Futsal
 from user.models import User
 import uuid
@@ -28,6 +28,8 @@ class TimeSlot(models.Model):
     def __str__(self):
         return f"{self.futsal.name} | {self.start_time} - {self.end_time}"
 
+
+
 class Bookings(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -43,11 +45,19 @@ class Bookings(models.Model):
         related_name="bookings"
     )
 
+    booking_type = models.CharField(
+        max_length=20,
+        choices=[(tag.name, tag.value) for tag in BookingType],
+        default=BookingType.HOURLY.name
+    )
+
     time_slot = models.ForeignKey(
         TimeSlot,
         on_delete=models.PROTECT,
         related_name="bookings"
     )
+
+    is_full_day = models.BooleanField(default=False)
 
     required_date = models.DateField()
 
