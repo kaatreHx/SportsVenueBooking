@@ -75,6 +75,13 @@ class BookingsSerializer(serializers.ModelSerializer):
         booking = Bookings.objects.create(**validated_data, total_price=timeSlotData.price)
         booking.status = BookingStatus.PENDING
         booking.payment_status = PaymentStatus.PENDING
+        is_full_day = validated_data.get('is_full_day')
+        if is_full_day:
+            book_slot = TimeSlot.objects.filter(futsal=booking.futsal)
+            for slot in book_slot:
+                slot.is_active = False
+                slot.save() 
+            
         booking.save()
         return booking
 
