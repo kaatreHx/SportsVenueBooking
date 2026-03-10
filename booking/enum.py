@@ -12,4 +12,8 @@ class PaymentStatus(Enum):
     PAID = "paid"
     FAILED = "failed"
     REFUNDED = "refunded"
+
+class BookingType(Enum):
+    HOURLY = "hourly"
+    EVENT = "event"
     
