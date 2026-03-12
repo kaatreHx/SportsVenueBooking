@@ -19,6 +19,12 @@ class BookingsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'patch', 'delete']
 
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        bookings = Bookings.objects.filter(user=request.user)
+        serializer = BookingsSerializer(bookings, many=True)
+        return Response(serializer.data)
+
     @action(detail=True, methods=['get'])
     def my_bookings(self, request):
         bookings = Bookings.objects.filter(user=request.user)
