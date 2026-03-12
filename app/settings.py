@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user',
     'futsal',
     'booking',
+    'feedback',
 ]
 
 AUTH_USER_MODEL = 'user.User'
