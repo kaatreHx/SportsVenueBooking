@@ -39,6 +39,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     address = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100, blank=True)
+
+    #Stats
+    matches_played = models.IntegerField(default=0)
+    hour_played = models.IntegerField(default=0)
+
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     document = models.FileField(upload_to='documents/', blank=True, null=True)
 
