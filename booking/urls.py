@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .apis import TimeSlotViewSet, BookingsViewSet, PaymentProofViewSet
+from .apis import TimeSlotViewSet, BookingsViewSet, PaymentProofViewSet, AvailableSlotsAPIView
 
 router = DefaultRouter()
 router.register(r'time-slots', TimeSlotViewSet, basename='time-slot')
@@ -9,4 +9,5 @@ router.register(r'payment-proofs', PaymentProofViewSet, basename='payment-proof'
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('available-slots/<str:futsal_uuid>/<str:date>', AvailableSlotsAPIView.as_view(), name='available-slots'),
 ]

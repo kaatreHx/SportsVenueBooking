@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .enum import BookingStatus
+from rest_framework.views import APIView
 
 class TimeSlotViewSet(viewsets.ModelViewSet):
     queryset = TimeSlot.objects.all()
@@ -47,3 +48,35 @@ class PaymentProofViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentProofSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'patch', 'delete']
+
+class AvailableSlotsAPIView(APIView):
+
+    def get(self, request, futsal_uuid):
+
+        date = request.query_params.get("date")
+
+        if not date:
+            return Response(
+                {"detail": "Date is required"},
+                status=400
+            )
+
+        futsal = Futsal.objects.get(uuid=futsal_uuid)
+
+        booked_slot_ids = Bookings.objects.filter(
+            futsal=futsal,
+            required_date=date,
+            status__in=["PENDING", "CONFIRMED"]
+        ).values_list("time_slot_id", flat=True)
+
+        available_slots = TimeSlot.objects.filter(
+            futsal=futsal,
+            is_active=True
+        ).exclude(
+            id__in=booked_slot_ids
+        )
+
+        serializer = TimeSlotSerializer(available_slots, many=True)
+
+        return Response(serializer.data)
+        
