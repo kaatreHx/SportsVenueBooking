@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import User
 from .sms_service import send_sms
 from .otp_helper import generate_and_store_otp
+from django.db import transaction
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,12 +19,19 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        user.is_active = True
-        user.save()
-        #Test number "+18777804236"
-        # otp = generate_and_store_otp(user.phone)
-        # send_sms(user.phone, f"Your OTP is {otp}")
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data)
+            user.is_active = True
+            user.save()
+            otp = generate_and_store_otp(user.phone)
+        
+        # SMS outside transaction - user still created if this fails
+        try:
+            send_sms(user.phone, f"Your OTP is {otp}")
+        except Exception as e:
+            # Log the error but don't fail registration
+            print(f"SMS failed: {e}")
+        
         return user
 
     def update(self, instance, validated_data):
