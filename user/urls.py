@@ -16,5 +16,6 @@ auth_patterns = [
 
 urlpatterns = [
     path('auth/', include(auth_patterns)),
-    path('users/', include(router.urls))
+    path('users/', include(router.urls)),
+    path('leaderboard/', apis.WeeklyLeaderboardAPIView.as_view(), name='leaderboard'),
 ]
