@@ -7,6 +7,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .enum import BookingStatus
 from rest_framework.views import APIView
+from datetime import datetime, timedelta
+from django.db.models import Sum
 
 class TimeSlotViewSet(viewsets.ModelViewSet):
     queryset = TimeSlot.objects.all()
@@ -80,3 +82,50 @@ class AvailableSlotsAPIView(APIView):
 
         return Response(serializer.data)
         
+class StaffDashboardAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        queryset = Bookings.objects.all()
+
+        today = datetime.now().date()
+        yesterday = today - timedelta(days=1)
+
+        # Pending requests
+        book_requests = queryset.filter(status="PENDING").count()
+
+        # Today's confirmed matches
+        todays_matches = queryset.filter(
+            required_date=today,
+            status="CONFIRMED"
+        ).count()
+
+        # Today & Yesterday counts
+        today_count = queryset.filter(
+            required_date=today,
+            status="CONFIRMED"
+        ).count()
+
+        yesterday_count = queryset.filter(
+            required_date=yesterday,
+            status="CONFIRMED"
+        ).count()
+
+        # Growth %
+        if yesterday_count == 0:
+            request_growth = 100 if today_count > 0 else 0
+        else:
+            request_growth = ((today_count - yesterday_count) / yesterday_count) * 100
+
+        # Total revenue from all confirmed bookings
+        revenue = queryset.filter(
+            status="CONFIRMED"
+        ).aggregate(total=Sum("total_price"))["total"] or 0
+
+        return Response({
+            "booking_requests": book_requests,
+            "todays_matches": todays_matches,
+            "request_growth_percent": round(request_growth, 2),
+            "revenue": revenue
+        })
