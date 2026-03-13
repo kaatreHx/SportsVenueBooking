@@ -17,3 +17,11 @@ class BookingType(Enum):
     HOURLY = "hourly"
     EVENT = "event"
     
+class PlayerStatus(Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+
+class PlayerType(Enum):
+    JOINED = "joined"
+    INVITED = "invited"
