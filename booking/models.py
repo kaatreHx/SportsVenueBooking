@@ -1,5 +1,5 @@
 from django.db import models
-from .enum import BookingStatus, PaymentStatus, BookingType
+from .enum import BookingStatus, PaymentStatus, BookingType, PlayerStatus, PlayerType
 from futsal.models import Futsal
 from user.models import User
 import uuid
@@ -51,6 +51,11 @@ class Bookings(models.Model):
         default=BookingType.HOURLY.name
     )
 
+    no_of_players = models.IntegerField(
+        default=1,
+        help_text="Number of players"
+    )
+
     time_slot = models.ForeignKey(
         TimeSlot,
         on_delete=models.PROTECT,
@@ -89,6 +94,38 @@ class Bookings(models.Model):
 
     def __str__(self):
         return f"{self.futsal.name} | {self.user.username} | {self.required_date}"
+
+class Players(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    booking = models.ForeignKey(
+        Bookings,
+        on_delete=models.CASCADE,
+        related_name="players"
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="players"
+    )
+
+    player_type = models.CharField(
+        max_length=20,
+        choices=[(tag.name, tag.value) for tag in PlayerType],
+        default=PlayerType.JOINED.name
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=[(tag.name, tag.value) for tag in PlayerStatus],
+        default=PlayerStatus.PENDING.name
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Players | {self.booking.uuid} | {self.user.username}"
 
 def payment_proof_path(instance, filename):
     return f"payment_proofs/{instance.booking.user.uuid}/{filename}"
