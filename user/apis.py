@@ -11,6 +11,11 @@ from .otp_helper import verify_otp
 from django.db.models import Count, Sum, F, Q, ExpressionWrapper, DurationField
 from datetime import timedelta
 from django.utils import timezone
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomLoginSerializer
+
+class CustomLoginView(TokenObtainPairView):
+    serializer_class = CustomLoginSerializer
 
 class RegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
