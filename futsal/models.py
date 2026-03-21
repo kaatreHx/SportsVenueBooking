@@ -19,7 +19,6 @@ class Futsal(models.Model):
         decimal_places=6,
         help_text="GPS longitude"
     )
-    email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=100)
     contact_number_primary = models.CharField(max_length=15)
