@@ -38,7 +38,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, null=True)
     
     address = models.CharField(max_length=255, blank=True)
-    city = models.CharField(max_length=100, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     document = models.FileField(upload_to='documents/', blank=True, null=True)
 

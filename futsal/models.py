@@ -21,7 +21,6 @@ class Futsal(models.Model):
     )
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=100)
     contact_number_primary = models.CharField(max_length=15)
     contact_number_secondary = models.CharField(max_length=15, blank=True, null=True)
     price_per_hour = models.DecimalField(max_digits=8, decimal_places=2)
