@@ -44,6 +44,11 @@ class UserAPIView(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'delete']
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
 class WeeklyLeaderboardAPIView(APIView):
     permission_classes = [AllowAny]
 
