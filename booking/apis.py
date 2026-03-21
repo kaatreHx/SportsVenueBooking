@@ -118,8 +118,9 @@ class StaffDashboardAPIView(APIView):
         else:
             request_growth = ((today_count - yesterday_count) / yesterday_count) * 100
 
-        # Total revenue from all confirmed bookings
+        # Total revenue from today's confirmed bookings
         revenue = queryset.filter(
+            required_date=today,
             status="CONFIRMED"
         ).aggregate(total=Sum("total_price"))["total"] or 0
 
