@@ -22,6 +22,7 @@ class CustomLoginSerializer(TokenObtainPairSerializer):
                 user = User.objects.get(email=login)
             else:
                 user = User.objects.get(phone=login)
+                print("User Phone", user.phone)
         except User.DoesNotExist:
             raise serializers.ValidationError({"login": "User not found"})
 
@@ -59,11 +60,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             
         
         # SMS outside transaction - user still created if this fails
-        try:
-            send_sms(user.phone, f"Your OTP is {otp}")
-        except Exception as e:
-            # Log the error but don't fail registration
-            print(f"SMS failed: {e}")
+        # try:
+        #     send_sms(user.phone, f"Your OTP is {otp}")
+        # except Exception as e:
+        #     # Log the error but don't fail registration
+        #     print(f"SMS failed: {e}")
         
         return user
 
