@@ -33,7 +33,10 @@ class CustomLoginSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         # default JWT validation (returns access + refresh only)
-        return super().validate(attrs)
+        data = super().validate(attrs)
+        data["role"] = "vendor" if self.user.is_vendor else "player"
+
+        return data
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
