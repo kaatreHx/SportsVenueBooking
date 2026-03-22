@@ -12,31 +12,71 @@ from django.db.models import Count, Sum, F, Q, ExpressionWrapper, DurationField
 from datetime import timedelta
 from django.utils import timezone
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import CustomLoginSerializer
+from django.conf import settings
+
 
 class CustomLoginView(TokenObtainPairView):
     serializer_class = CustomLoginSerializer
+
 
 class RegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        response_data = {
+            'message': 'Registration successful. Please verify your OTP.',
+            'phone': user.phone,
+        }
+
+        # In DEBUG mode, return OTP in response (no SMS configured)
+        if settings.DEBUG:
+            response_data['otp'] = getattr(user, '_otp', None)
+
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
+
 class VerifyOTP(APIView):
-    serializer_class = VerifyOTPSerializer
     permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
-        if serializer.is_valid():
-            user = User.objects.get(phone=serializer.validated_data['phone'])
-            if verify_otp(user.phone, serializer.validated_data['otp']):
-                user.is_active = True
-                user.save()
-                return JsonResponse({'message': 'OTP verified successfully'}, status=status.HTTP_200_OK)
-            else:
-                return JsonResponse({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        phone = serializer.validated_data['phone']
+        otp = serializer.validated_data['otp']
+
+        try:
+            user = User.objects.get(phone=phone)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not verify_otp(phone, otp):
+            return Response({'message': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.is_active = True
+        user.save()
+
+        # Issue JWT tokens so frontend can log in immediately after OTP
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'message': 'OTP verified successfully',
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'role': 'vendor' if user.is_vendor else 'player',
+            'full_name': user.full_name,
+            'is_vendor': user.is_vendor,
+            'uuid': str(user.uuid),
+        }, status=status.HTTP_200_OK)
+
 
 class UserAPIView(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -44,10 +84,11 @@ class UserAPIView(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'delete']
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
 
 class WeeklyLeaderboardAPIView(APIView):
     permission_classes = [AllowAny]
@@ -92,11 +133,13 @@ class WeeklyLeaderboardAPIView(APIView):
                 if player.hour_played_week
                 else 0
             )
-
             leaderboard.append({
                 "rank": rank,
                 "full_name": player.full_name,
-                "profile_picture": player.profile_picture.url if player.profile_picture else None,
+                "profile_picture": (
+                    request.build_absolute_uri(player.profile_picture.url)
+                    if player.profile_picture else None
+                ),
                 "hours_played_week": round(hours, 2),
                 "matches_played_week": player.matches_played_week,
                 "score": round(hours * 10 + player.matches_played_week, 2),
