@@ -8,4 +8,8 @@ class VenueApprovalStatus(Enum):
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
-    
+
+class VenueType(Enum):
+    INDOOR = "Indoor"
+    OUTDOOR = "Outdoor"
+

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 import uuid
-from .enum import ImageType, VenueApprovalStatus
+from .enum import ImageType, VenueApprovalStatus, VenueType
 
 # from attachment.models import Attachment
 
@@ -30,6 +30,11 @@ class Futsal(models.Model):
         choices=[(tag.value, tag.value) for tag in VenueApprovalStatus],
         default=VenueApprovalStatus.PENDING.value
     )
+    venue_type = models.CharField(
+        max_length=20,
+        choices=[(tag.value, tag.value) for tag in VenueType],
+        default=VenueType.INDOOR.value,
+    )
     # amenities
     wifi = models.BooleanField(default=False)
     washroom = models.BooleanField(default=False)
@@ -40,6 +45,7 @@ class Futsal(models.Model):
     closing_time = models.TimeField()
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Name {self.name} - Time {self.opening_time} - {self.closing_time}"
