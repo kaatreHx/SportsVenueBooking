@@ -130,3 +130,12 @@ class StaffDashboardAPIView(APIView):
             "request_growth_percent": round(request_growth, 2),
             "revenue": revenue
         })
+
+class TimeSlotViewSet(viewsets.ModelViewSet):
+    queryset = TimeSlot.objects.all()
+    serializer_class = TimeSlotSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_queryset(self):
+        return self.queryset.filter(futsal=self.request.user.futsal)
