@@ -6,7 +6,6 @@ router = DefaultRouter()
 router.register(r'time-slots', TimeSlotViewSet, basename='time-slot')
 router.register(r'bookings', BookingsViewSet, basename='booking')
 router.register(r'payment-proofs', PaymentProofViewSet, basename='payment-proof')
-router.register(r'time-slots', TimeSlotViewSet, basename='time-slot')
 
 urlpatterns = [
     path('', include(router.urls)),
