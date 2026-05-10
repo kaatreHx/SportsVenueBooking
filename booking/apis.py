@@ -14,7 +14,7 @@ class TimeSlotViewSet(viewsets.ModelViewSet):
     queryset = TimeSlot.objects.all()
     serializer_class = TimeSlotSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'pos', 'patch', 'delete']
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
 class BookingsViewSet(viewsets.ModelViewSet):
     queryset = Bookings.objects.all()
